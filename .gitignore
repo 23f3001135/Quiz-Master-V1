@@ -15,3 +15,6 @@ __pycache__/
 .gitignore
 
 .venv
+uv.lock
+pyproject.toml
+.python-version
