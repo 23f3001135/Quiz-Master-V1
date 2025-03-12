@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Sign Up to Quiz Master - Get started!
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-7">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title
+                            text-primary">Sign Up to Quiz Master</h3>
+                </div>
+                <div class="card-body">
+
+                    <form action="/signup" method="POST">
+                        <div class="row">
+                            <div class="input-group mb-3 col">
+                                <input type="text" class="form-control" placeholder="Full Name" aria-label="full_name"
+                                    aria-describedby="full_name" name="full_name" required>
+                            </div>
+                            <div class="input-group mb-3 col">
+                                <input type="text" class="form-control" placeholder="Username" aria-label="Username"
+                                    aria-describedby="username" name="username" required>
+                            </div>
+
+                            <div class="input-group mb-3">
+                                <input type="email" class="form-control" placeholder="Email" aria-label="Email"
+                                    aria-describedby="email" name="email" required>
+                            </div>
+
+                            <div class="input-group mb-3 col">
+
+                                <input type="password" class="form-control" id="password" name="password" placeholder="Password" required>
+                            </div>
+                            <div class=" input-group mb-3 col">
+
+                                <input type="password" class="form-control" id="confirm_password"
+                                    name="confirm_password" placeholder="Confirm Password" required>
+                            </div>
+                            <p>Already have an account? <a type="button" class="btn-link" href="/login">Login</a></p>
+                        </div>
+
+                        <div class="d-grid gap-2 col-6 mx-auto">
+                            <button class="btn btn-primary" type="submit">Signin</button>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

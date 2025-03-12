@@ -1,5 +1,4 @@
-from flask import Flask, render_template, request
-from flask_sqlalchemy import SQLAlchemy
+from flask import Flask
 from dotenv import load_dotenv
 import os
 
@@ -20,11 +19,11 @@ except Exception as e:
     print("Error initializing database:", e)
     
 try:
-
     from routes import set_routes
     set_routes(app)
 except Exception as e:
     print("Error importing routes:", e)
+
 
 if __name__ == "__main__":
     app.run(debug=True, port=5000)
