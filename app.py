@@ -1,14 +1,30 @@
 from flask import Flask, render_template, request
 from flask_sqlalchemy import SQLAlchemy
+from dotenv import load_dotenv
+import os
 
-app = Flask(__name__) # creating instance of flask
+load_dotenv()
+app = Flask(__name__)
 
-import config # importing configs from .env etc
-import models # importing models like User, Post etc
-import routes # importing routes like index, login, register etc
+try:
+    app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("SQLALCHEMY_DATABASE_URI")
+    app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+    app.config["SECRET_KEY"] = os.getenv("SECRET_KEY", "default-secret-key")
+except Exception as e:
+    print("Error loading environment variables:", e)
 
+try:
+    from models import create_db
+    create_db(app)
+except Exception as e:
+    print("Error initializing database:", e)
+    
+try:
 
-
+    from routes import set_routes
+    set_routes(app)
+except Exception as e:
+    print("Error importing routes:", e)
 
 if __name__ == "__main__":
-    app.run(debug=True, port=5000) # running the app on port 5000
+    app.run(debug=True, port=5000)
