@@ -1,4 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
+from werkzeug.security import generate_password_hash
 
 db = SQLAlchemy()
 
@@ -49,3 +50,12 @@ def create_db(app):
     db.init_app(app)
     with app.app_context():
         db.create_all()
+        # checking if admins already exist if not create one
+        admin = User.query.filter_by(is_admin=True).first()
+        if not admin:
+            passhash = generate_password_hash("admin")
+            new_admin = User(
+                fullname="Admin", username="admin", email="admin@example.com", passhash=passhash, is_admin=True
+            )
+            db.session.add(new_admin)
+            db.session.commit()

@@ -1,4 +1,4 @@
-from flask import flash, redirect, render_template, request, url_for
+from flask import flash, redirect, render_template, request, url_for, session
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from models import Chapter, Question, Quiz, Score, Subject, User, db
@@ -57,12 +57,12 @@ def set_routes(app):
     @app.route("/login", methods=["GET", "POST"])
     def login():
         if request.method == "POST":
-            email = request.form.get("email")
+            username = request.form.get("username")
             password = request.form.get("password")
-            if not email or not password:
-                flash("Email and password are required")
+            if not username or not password:
+                flash("Username and password are required")
                 return render_template("login.html")
-            user = User.query.filter_by(email=email).first()
+            user = User.query.filter_by(username=username).first()
             if not user:
                 flash("Account does not exist")
                 return render_template("login.html")
@@ -70,7 +70,16 @@ def set_routes(app):
                 flash("Incorrect password")
                 return render_template("login.html")
             else:
-                return redirect(url_for("home"))
+                if user.is_admin:
+                    session["user_id"] = user.id
+                    session["admin"] = True
+                    return redirect(url_for("admin_home"))
+                    
+                    
+                else:
+                    session["user_id"] = user.id
+                    session["admin"] = False
+                    return redirect(url_for("home"))
 
         return render_template("login.html")
 
@@ -78,36 +87,14 @@ def set_routes(app):
     def home():
         return render_template("home.html")
 
-    @app.route("/adminlogin", methods=["GET", "POST"])
-    def adminlogin():
-        if request.method == "POST":
-            email = request.form.get("email")
-            password = request.form.get("password")
-
-            if not email or not password:  # checking if email and password are provided
-                flash("Email and password are required")
-                return render_template("adminlogin.html")
-
-            user = User.query.filter_by(
-                email=email
-            ).first()  # checking if user exists - part 1
-
-            if not user:  # checking if user exists - part 2
-                flash("Account does not exist")
-                return render_template("adminlogin.html")
-            elif not check_password_hash(
-                user.passhash, password
-            ):  # checking if password is correct
-                flash("Incorrect password")
-                return render_template("adminlogin.html")
-            elif not user.is_admin:  # checking if user is admin
-                flash("You are not authorized to access this page")
-                return render_template("adminlogin.html")
-            else:
-                return redirect(url_for("admin_home"))
-
-        return render_template("adminlogin.html")
-
     @app.route("/admin_home")
     def admin_home():
-        return render_template("admin_home.html")
+        if "admin" in session and "user_id" in session:
+            if session['admin']:
+                return render_template("admin_home.html")
+            else:
+                flash("Access denied")
+                return redirect(url_for("home"))
+        else:
+            flash("Please login first!")
+            return redirect(url_for("login"))
