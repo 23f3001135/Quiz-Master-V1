@@ -17,9 +17,10 @@ try:
     create_db(app)
 except Exception as e:
     print("Error initializing database:", e)
-    
+
 try:
     from routes import set_routes
+
     set_routes(app)
 except Exception as e:
     print("Error importing routes:", e)

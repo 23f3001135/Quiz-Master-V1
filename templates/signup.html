@@ -40,11 +40,11 @@ Sign Up to Quiz Master - Get started!
                                 <input type="password" class="form-control" id="confirm_password"
                                     name="confirm_password" placeholder="Confirm Password" required>
                             </div>
-                            <p>Already have an account? <a type="button" class="btn-link" href="/login">Login</a></p>
+                            <p>Already have an account? <a type="button" class="btn-link" href="{{ url_for('login') }}">Login</a></p>
                         </div>
 
                         <div class="d-grid gap-2 col-6 mx-auto">
-                            <button class="btn btn-primary" type="submit">Signin</button>
+                            <button class="btn btn-primary" type="submit">Sign Up</button>
                         </div>
 
                     </form>
