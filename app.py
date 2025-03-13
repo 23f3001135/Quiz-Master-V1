@@ -1,10 +1,11 @@
-from flask import Flask
-from dotenv import load_dotenv
 import os
+
+from dotenv import load_dotenv
+from flask import Flask
 
 load_dotenv()
 app = Flask(__name__)
-
+# adding config for database and secret key...
 try:
     app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("SQLALCHEMY_DATABASE_URI")
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
@@ -12,12 +13,15 @@ try:
 except Exception as e:
     print("Error loading environment variables:", e)
 
+# creating db
 try:
     from models import create_db
+
     create_db(app)
 except Exception as e:
     print("Error initializing database:", e)
 
+# setting routes using set_routes function from routes.py
 try:
     from routes import set_routes
 

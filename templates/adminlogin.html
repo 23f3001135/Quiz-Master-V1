@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block title %}
-Login to Quiz Master - Welcome back!
+Admins Only Login!
 {% endblock %}
 
 {% block content %}
@@ -11,10 +11,14 @@ Login to Quiz Master - Welcome back!
             <div class="card">
                 <!-- header of card -->
                 <div class="card-header">
-                    <h3 class="card-title mt-2  text-center text-primary">Welcome Back!</h3>
+                    <h3 class="card-title mt-2  text-center text-primary">Admin Login</h3>
                 </div>
                 <div class="card-body">
-                    <form action="/login" method="POST">
+                    <form action="/adminlogin" method="POST">
+                        <!-- important warning -->
+                        <div class="alert alert-warning" role="alert">
+                            <strong>Important!</strong> If you're not an admin, and by mistake arrived here, pls login using user login.
+                        </div>
                         <!-- Email input -->
                         <div class="form-floating mb-3">
                             <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com"
@@ -27,13 +31,9 @@ Login to Quiz Master - Welcome back!
                                 name="password" required>
                             <label for="floatingPassword">Password</label>
                         </div>
-                        <!-- don't have account thing -->
-                        <div class="mt-2">
-                            <p>Don't have an account? <a type="button" class="btn-link"
-                                    href="{{ url_for('signup') }}">Sign up</a></p>
-                        </div>
+
                         <!-- summit/login button -->
-                        <div class="d-grid gap-2 col-6 mx-auto">
+                        <div class="d-grid gap-2 col-6 mx-auto mt-3">
                             <button class="btn btn-primary" type="submit">Login</button>
                         </div>
                     </form>
