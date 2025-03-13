@@ -1,4 +1,3 @@
-# Python-generated files
 *.pyc
 __pycache__/
 *.py[oc]
@@ -11,10 +10,13 @@ __pycache__/
 # Logs
 *.log
 
+# Instance folder
+instance/*
+
 # Ignore yourself too!
 .gitignore
 
+# UV is a python package manager (https://astral.sh/blog/uv)
 uv.lock
 pyproject.toml
 .python-version
-instance

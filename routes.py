@@ -1,10 +1,22 @@
-from flask import flash, redirect, render_template, request, url_for, session
+from functools import wraps
+
+from flask import flash, redirect, render_template, request, session, url_for
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from models import Chapter, Question, Quiz, Score, Subject, User, db
 
 
 def set_routes(app):
+    def auth_required(func):
+        @wraps(func)
+        def decorated_function(*args, **kwargs):
+            if "user_id" not in session:
+                flash("Please login first!")
+                return redirect(url_for("login"))
+            return func(*args, **kwargs)
+
+        return decorated_function
+
     @app.route("/")
     def index():
         return render_template("index.html")
@@ -71,30 +83,83 @@ def set_routes(app):
                 return render_template("login.html")
             else:
                 if user.is_admin:
-                    session["user_id"] = user.id
+                    session["user_id"] = user.username
                     session["admin"] = True
                     return redirect(url_for("admin_home"))
-                    
-                    
                 else:
-                    session["user_id"] = user.id
+                    session["user_id"] = user.username
                     session["admin"] = False
                     return redirect(url_for("home"))
 
         return render_template("login.html")
 
     @app.route("/home")
+    @auth_required
     def home():
-        return render_template("home.html")
+        if "admin" in session is True:
+            return redirect(url_for("admin_home"))
+        else:
+            return render_template("home.html")
 
     @app.route("/admin_home")
+    @auth_required
     def admin_home():
-        if "admin" in session and "user_id" in session:
-            if session['admin']:
-                return render_template("admin_home.html")
-            else:
-                flash("Access denied")
-                return redirect(url_for("home"))
+        if "admin" in session is True:
+            return render_template("admin_home.html")
         else:
-            flash("Please login first!")
-            return redirect(url_for("login"))
+            flash("Access denied")
+            return redirect(url_for("home"))
+
+    @app.route("/profile", methods=["GET", "POST"])
+    @auth_required
+    def profile():
+        if request.method == "POST":
+            
+            user = User.query.get(session["user_id"])
+            full_name = request.form.get("full_name")
+            username = request.form.get("username")
+            cpassword = request.form.get("cpassword")
+            npassword = request.form.get("password")
+            
+            if not full_name or not username:
+                full_name = user.fullname
+                username = user.username
+            
+            if username != user.username:
+                user_exist = User.query.filter_by(username=username).first()
+                if user_exist:
+                    flash("Username already exists")
+                    return render_template("profile.html", user=user)
+            
+            user.fullname = full_name
+            user.username = username
+            
+            if npassword and not cpassword:
+                flash("Current password is required")
+                return render_template("profile.html", user=user)
+            
+            
+
+            if not check_password_hash(user.passhash, cpassword):
+                flash("Incorrect password")
+                return render_template("profile.html", user=user)
+
+            if npassword:
+                passhash = generate_password_hash(npassword)
+                user.passhash = passhash
+
+            db.session.commit()
+
+            flash("Profile updated successfully")
+            return render_template("profile.html", user=user)
+
+        user = User.query.get(session["user_id"])
+        return render_template("profile.html", user=user)
+
+    @app.route("/logout", methods=["GET"])
+    @auth_required
+    def logout():
+        session.pop("user_id", None)
+        session.pop("admin", None)
+        flash("Successfully logged out")
+        return redirect(url_for("index"))
