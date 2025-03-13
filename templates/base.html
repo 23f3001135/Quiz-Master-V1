@@ -18,7 +18,7 @@
 
 <body>
 
-    {% include 'navbar.html' %}
+    {% include 'navbar.html' with context %}
     {% with messages = get_flashed_messages() %}
     {% if messages %}
     <div class="alert alert-danger" role="alert">

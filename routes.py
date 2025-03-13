@@ -7,16 +7,6 @@ from models import Chapter, Question, Quiz, Score, Subject, User, db
 
 
 def set_routes(app):
-    def auth_required(func):
-        @wraps(func)
-        def decorated_function(*args, **kwargs):
-            if "user_id" not in session:
-                flash("Please login first!")
-                return redirect(url_for("login"))
-            return func(*args, **kwargs)
-
-        return decorated_function
-
     @app.route("/")
     def index():
         return render_template("index.html")
@@ -92,11 +82,20 @@ def set_routes(app):
                     return redirect(url_for("home"))
 
         return render_template("login.html")
+    def auth_required(func):
+        @wraps(func)
+        def decorated_function(*args, **kwargs):
+            if "user_id" not in session:
+                flash("Please login first!")
+                return redirect(url_for("login"))
+            return func(*args, **kwargs)
 
+        return decorated_function
+    
     @app.route("/home")
     @auth_required
     def home():
-        if "admin" in session is True:
+        if "admin" in session and session["admin"] is True:
             return redirect(url_for("admin_home"))
         else:
             return render_template("home.html")
@@ -104,7 +103,7 @@ def set_routes(app):
     @app.route("/admin_home")
     @auth_required
     def admin_home():
-        if "admin" in session is True:
+        if "admin" in session and session["admin"] is True:
             return render_template("admin_home.html")
         else:
             flash("Access denied")
