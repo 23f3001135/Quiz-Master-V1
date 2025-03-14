@@ -7,6 +7,9 @@ from models import Chapter, Question, Quiz, Score, Subject, User, db
 
 
 def set_routes(app):
+    
+    # --- Auth Routes ---
+    
     @app.route("/")
     def index():
         return render_template("index.html")
@@ -82,6 +85,9 @@ def set_routes(app):
                     return redirect(url_for("home"))
 
         return render_template("login.html")
+
+    # --- Decorators ---
+
     def auth_required(func):
         @wraps(func)
         def decorated_function(*args, **kwargs):
@@ -91,7 +97,22 @@ def set_routes(app):
             return func(*args, **kwargs)
 
         return decorated_function
-    
+
+    def admin_required(func):
+        @wraps(func)
+        def decorated_function(*args, **kwargs):
+            if "user_id" not in session:
+                flash("Please login first!")
+                return redirect(url_for("login"))
+            if not session.get("admin", False):
+                flash("You're not authorized to access this page!")
+                return redirect(url_for("login"))
+            return func(*args, **kwargs)
+
+        return decorated_function
+
+    # --- Genral Pages ---
+
     @app.route("/home")
     @auth_required
     def home():
@@ -100,44 +121,32 @@ def set_routes(app):
         else:
             return render_template("home.html")
 
-    @app.route("/admin_home")
-    @auth_required
-    def admin_home():
-        if "admin" in session and session["admin"] is True:
-            return render_template("admin_home.html")
-        else:
-            flash("Access denied")
-            return redirect(url_for("home"))
-
     @app.route("/profile", methods=["GET", "POST"])
     @auth_required
     def profile():
         if request.method == "POST":
-            
             user = User.query.get(session["user_id"])
             full_name = request.form.get("full_name")
             username = request.form.get("username")
             cpassword = request.form.get("cpassword")
             npassword = request.form.get("password")
-            
+
             if not full_name or not username:
                 full_name = user.fullname
                 username = user.username
-            
+
             if username != user.username:
                 user_exist = User.query.filter_by(username=username).first()
                 if user_exist:
                     flash("Username already exists")
                     return render_template("profile.html", user=user)
-            
+
             user.fullname = full_name
             user.username = username
-            
+
             if npassword and not cpassword:
                 flash("Current password is required")
                 return render_template("profile.html", user=user)
-            
-            
 
             if not check_password_hash(user.passhash, cpassword):
                 flash("Incorrect password")
@@ -162,3 +171,34 @@ def set_routes(app):
         session.pop("admin", None)
         flash("Successfully logged out")
         return redirect(url_for("index"))
+
+    # --- Admin Pages ---
+    
+    @app.route("/admin_home")
+    @admin_required
+    def admin_home():
+        if "admin" in session and session["admin"] is True:
+            return render_template("admin_home.html")
+        else:
+            flash("Access denied")
+            return redirect(url_for("home"))
+
+    @app.route("/add_subjects", methods=["GET", "POST"])  # TODO: complete this route
+    @admin_required
+    def add_subjects():
+        return "Temp add subjects..."
+
+    @app.route("/subject/<int:id>/")
+    @admin_required
+    def show_subjects():
+        return "Show Subject..."
+
+    @app.route("/subject/<int:id>/edit")
+    @auth_required
+    def edit_subject():
+        return "Edit Subject..."
+
+    @app.route("/subject/<int:id>/delete")
+    @auth_required
+    def delete_subject():
+        return "Delete Subject..."

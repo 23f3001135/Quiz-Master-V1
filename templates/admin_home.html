@@ -4,7 +4,37 @@ Admin Home
 {% endblock %}
 {% block content %}
 <div class="container mt-3">
-<h1>Admin Home</h1>
-<p>Welcome to the admin home page.</p>
+    <h1>Admin Home</h1>
+    <p>Welcome to the admin home page.</p>
+    <div class="col">
+        <a href="{{url_for('add_subjects')}}" class="btn btn-primary"><i class="fas fa-plus"></i> Add Subjects</a>
+    </div>
+    <br>
+    <h2>Subjects</h2>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Subject ID</th>
+                <th>Subject Name</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for subject in subjects %}
+            <tr>
+                <td>{{subject.subject_id}}</td>
+                <td>{{subject.subject_name}}</td>
+                <td>
+                    <a href="{{url_for('show_subject', subject_id=subject.subject_id)}}" class="btn btn-info"><i
+                            class="fas fa-search"></i> Show</a>
+                    <a href="{{url_for('edit_subject', subject_id=subject.subject_id)}}" class="btn btn-warning"><i
+                            class="fas fa-edit"></i> Edit</a>
+                    <a href="{{url_for('delete_subject', subject_id=subject.subject_id)}}" class="btn btn-danger"><i
+                            class="fas fa-trash"></i> Delete</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 </div>
 {% endblock %}
