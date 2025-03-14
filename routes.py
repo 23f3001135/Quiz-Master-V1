@@ -178,27 +178,70 @@ def set_routes(app):
     @admin_required
     def admin_home():
         if "admin" in session and session["admin"] is True:
-            return render_template("admin_home.html")
+            subjects = Subject.query.all()
+            return render_template("admin_home.html", subjects=subjects)
         else:
             flash("Access denied")
             return redirect(url_for("home"))
 
+    # Matter related to subjects
+
     @app.route("/add_subjects", methods=["GET", "POST"])  # TODO: complete this route
     @admin_required
     def add_subjects():
-        return "Temp add subjects..."
+        if request.method == "POST":
+            subject_name = request.form.get("subject_name")
+            subject_description = request.form.get("subject_description")
+            if not subject_name:
+                flash("Subject name is required")
+                return render_template("add_subjects.html")
+            subject = Subject(name=subject_name, description=subject_description)
+            db.session.add(subject)
+            db.session.commit()
+            flash("Subject added successfully")
+            return redirect(url_for("admin_home"))
+        return render_template("subject/add_subject.html")
 
     @app.route("/subject/<int:id>/")
     @admin_required
-    def show_subjects():
+    def show_subject(id):
         return "Show Subject..."
 
-    @app.route("/subject/<int:id>/edit")
+    @app.route("/subject/<int:id>/edit", methods=["GET", "POST"])
     @auth_required
-    def edit_subject():
-        return "Edit Subject..."
+    def edit_subject(id):
+        # Fetching to check if subject exists when url is hit
+        subject = Subject.query.get(id)
+        if not subject:
+            flash("Subject not found")
+            return redirect(url_for("admin_home"))
 
-    @app.route("/subject/<int:id>/delete")
+        # editing subject if form is submitted
+        if request.method == "POST":
+            subject_name = request.form.get("subject_name")
+            subject_description = request.form.get("subject_description")
+            if not subject_name:
+                flash("Subject name is required")
+                return render_template("subject/edit_subject.html", subject=subject)
+            subject.name = subject_name
+            subject.description = subject_description
+            db.session.commit()
+            flash("Subject updated successfully")
+            return redirect(url_for("admin_home"))
+        # rendering edit form
+        return render_template("subject/edit_subject.html", subject=subject)
+
+    @app.route("/subject/<int:id>/delete", methods=["GET", "POST"])
     @auth_required
-    def delete_subject():
-        return "Delete Subject..."
+    def delete_subject(id):
+        subject = Subject.query.get(id)
+        if not subject:
+            flash("Subject not found")
+            return redirect(url_for("admin_home"))
+        if request.method == "POST":
+            db.session.delete(subject)
+            db.session.commit()
+            flash("Subject deleted successfully")
+            return redirect(url_for("admin_home"))
+
+        return render_template("subject/delete_subject.html", subject=subject)

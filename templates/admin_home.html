@@ -22,14 +22,14 @@ Admin Home
         <tbody>
             {% for subject in subjects %}
             <tr>
-                <td>{{subject.subject_id}}</td>
-                <td>{{subject.subject_name}}</td>
+                <td>{{subject.id}}</td>
+                <td>{{subject.name}}</td>
                 <td>
-                    <a href="{{url_for('show_subject', subject_id=subject.subject_id)}}" class="btn btn-info"><i
+                    <a href="{{url_for('show_subject', id=subject.id)}}" class="btn btn-outline-info"><i
                             class="fas fa-search"></i> Show</a>
-                    <a href="{{url_for('edit_subject', subject_id=subject.subject_id)}}" class="btn btn-warning"><i
+                    <a href="{{url_for('edit_subject', id=subject.id)}}" class="btn btn-outline-warning"><i
                             class="fas fa-edit"></i> Edit</a>
-                    <a href="{{url_for('delete_subject', subject_id=subject.subject_id)}}" class="btn btn-danger"><i
+                    <a href="{{url_for('delete_subject', id=subject.id)}}" class="btn btn-outline-danger"><i
                             class="fas fa-trash"></i> Delete</a>
                 </td>
             </tr>
