@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% block title %}
+Questions related {{ quiz.name }}
+{% endblock %}
+{% block content %}
+<div class="container mt-3">
+    <h1>Questions related {{ quiz.name }}</h1>
+    <p>Here you can add, update and delete Question related to {{ quiz.name }}.</p>
+    <div class="col">
+        <a href="{{ url_for('add_question', subject_id=subject.id, chapter_id=chapter.id, quiz_id=quiz.id) }}" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Add Questions
+        </a>
+    </div>
+    <br>
+    <h2>Questions</h2>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Question ID</th>
+                <th>Question</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for question in quiz.included_questions %}
+            <tr>
+                <td>{{ question.id }}</td>
+                <td>{{ question.question }}</td>
+                <td>
+                    <a href="{{ url_for('show_question', subject_id=subject.id, chapter_id=chapter.id, quiz_id=quiz.id, question_id=question.id) }}" class="btn btn-outline-info">
+                        <i class="fas fa-search"></i> Show
+                    </a>
+                    <a href="{{ url_for('delete_question', subject_id=subject.id, chapter_id=chapter.id, quiz_id=quiz.id, question_id=question.id) }}" class="btn btn-outline-danger">
+                        <i class="fas fa-trash"></i> Delete
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

@@ -1,0 +1,25 @@
+<!-- this is add chapter page -->
+{% extends 'base.html' %}
+
+{% block title %}
+Add Chapter
+{% endblock %}
+
+{% block content %}
+<div class="container mt-3">
+    <h1>Add Chapter</h1>
+    <form method="POST">
+        <div class="form-group
+            <label for="chapter_name">Chapter Name</label>
+            <input type="text" class="form-control" id="chapter_name" name="chapter_name" required>
+        </div>
+        <div class="form-group">
+            <label for="chapter_description">Chapter Description</label>
+            <input type="text" class="form-control" id="chapter_description" name="chapter_description">
+        </div>
+        <div class="d-grid gap-2 col-6 mx-auto mt-3">
+            <button type="submit" class="btn btn-primary">Add Chapter</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

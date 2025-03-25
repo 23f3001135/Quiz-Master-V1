@@ -8,6 +8,7 @@ Admin Home
     <p>Welcome to the admin home page.</p>
     <div class="col">
         <a href="{{url_for('add_subjects')}}" class="btn btn-primary"><i class="fas fa-plus"></i> Add Subjects</a>
+        <a href="{{url_for('manage_users')}}" class="btn btn-primary"><i class="fa-solid fa-user"></i> Manage Users</a>
     </div>
     <br>
     <h2>Subjects</h2>
@@ -16,6 +17,7 @@ Admin Home
             <tr>
                 <th>Subject ID</th>
                 <th>Subject Name</th>
+                <th>No. of Chapters</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -24,6 +26,7 @@ Admin Home
             <tr>
                 <td>{{subject.id}}</td>
                 <td>{{subject.name}}</td>
+                <td>{{subject.chapters|length}}</td>
                 <td>
                     <a href="{{url_for('show_subject', id=subject.id)}}" class="btn btn-outline-info"><i
                             class="fas fa-search"></i> Show</a>

@@ -1,0 +1,33 @@
+<!-- let's show the list of all users and thier details here -->
+{% extends 'base.html' %}
+
+{% block title %}
+Manage Users
+{% endblock %}
+
+{% block content %}
+<div class="container mt-3">
+    <h1>Manage Users</h1>
+    <p>These are the list of all users.</p>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Username</th>
+                <th>Full Name</th>
+                <th>Email</th>
+                <th>Is Admin</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+            <tr>
+                <td>{{user.username}}</td>
+                <td>{{user.fullname}}</td>
+                <td>{{user.email}}</td>
+                <td>{{ 'Yes' if user.is_admin else 'No' }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

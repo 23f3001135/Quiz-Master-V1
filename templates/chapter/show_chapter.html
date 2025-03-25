@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% block title %}
+Quizzes of {{chapter.name}}
+{% endblock %}
+{% block content %}
+<div class="container mt-3">
+    <h1>Quizzes of {{chapter.name}}</h1>
+    <p>You can here manage quizzes related to {{chapter.name}} chapter.</p>
+    <div class="col">
+        <a href="{{url_for('add_quiz', subject_id=subject.id, chapter_id=chapter.id)}}" class="btn btn-primary"><i class="fas fa-plus"></i> Add Quiz</a>
+    </div>
+    <br>
+    <h2>Quizzes</h2>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Quiz ID</th>
+                <th>Quiz Name</th>
+                <th>No. of Questions</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for quiz in chapter.quizzes %}
+            <tr>
+                <td>{{quiz.id}}</td>
+                <td>{{quiz.name}}</td>
+                <td>{{quiz.included_questions|length}}</td>
+                <td>
+                    <a href="{{url_for('show_quiz', subject_id=subject.id, chapter_id=chapter.id, quiz_id=quiz.id)}}" class="btn btn-outline-info"><i
+                            class="fas fa-search"></i> Show</a>
+                    <a href="{{url_for('edit_quiz', subject_id=subject.id, chapter_id=chapter.id, quiz_id=quiz.id)}}" class="btn btn-outline-warning"><i
+                            class="fas fa-edit"></i> Edit</a>
+                    <a href="{{url_for('delete_quiz', subject_id=subject.id, chapter_id=chapter.id, quiz_id=quiz.id)}}" class="btn btn-outline-danger"><i
+                            class="fas fa-trash"></i> Delete</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
