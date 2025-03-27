@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% block title %}Quiz {{ quiz.name }}{% endblock %}
+{% block content %}
+<div class="container mt-5">
+    <h1 class="mb-4">Quiz: {{ quiz.name }}</h1>
+    <p class="lead">{{ quiz.description }}</p>
+    <div class="mb-3">
+        <strong>Duration:</strong> {{ quiz.quiz_duration }} minutes |
+        <strong>Scheduled for:</strong> {{ quiz.quiz_schedule_date.strftime('%Y-%m-%d %H:%M') }}
+    </div>
+    <form method="POST" action="{{ url_for('start_quiz', quiz_id=quiz.id) }}">
+        <div class="row">
+            <div class="col-12">
+                <div class="question-section">
+                    {% if questions %}
+                    {% for question in questions %}
+                    <div class="card mb-4">
+                        <div class="card-header bg-light">
+                            <h3>Question {{ loop.index }}</h3>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-text">{{ question.question }}</p>
+                            <hr>
+                            <h5>Options</h5>
+                            <div class="list-group">
+                                <label class="list-group-item">
+                                    <input class="form-check-input me-1" type="radio" name="question{{ question.id }}"
+                                        value="option1" required>
+                                    {{ question.option1 }}
+                                </label>
+                                <label class="list-group-item">
+                                    <input class="form-check-input me-1" type="radio" name="question{{ question.id }}"
+                                        value="option2">
+                                    {{ question.option2 }}
+                                </label>
+                                <label class="list-group-item">
+                                    <input class="form-check-input me-1" type="radio" name="question{{ question.id }}"
+                                        value="option3">
+                                    {{ question.option3 }}
+                                </label>
+                                <label class="list-group-item">
+                                    <input class="form-check-input me-1" type="radio" name="question{{ question.id }}"
+                                        value="option4">
+                                    {{ question.option4 }}
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+
+                    <div class="text-center mb-5">
+                        <button type="submit" class="btn btn-primary btn-lg">Submit Quiz</button>
+                    </div>
+                    {% else %}
+                    <div class="alert alert-info">
+                        <p>No questions available for this quiz.</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}

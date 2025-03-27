@@ -1,0 +1,161 @@
+{% extends 'base.html' %}
+{% block title %}Search Results{% endblock %}
+{% block content %}
+<div class="container mt-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Search Results</h1>
+        <a href="{{ url_for('search') }}" class="btn btn-primary">
+            <i class="fas fa-search"></i> New Search
+        </a>
+    </div>
+    
+    <div class="alert alert-info">
+        Showing results for: <strong>"{{ query }}"</strong> in <strong>{{ entity_type }}</strong>
+    </div>
+    
+    {% if results %}
+    <div class="card">
+        <div class="card-header bg-success text-white">
+            <h3 class="mb-0">{{ results|length }} result(s) found</h3>
+        </div>
+        <div class="card-body">
+            {% if entity_type == "users" %}
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Username</th>
+                            <th>Full Name</th>
+                            <th>Email</th>
+                            <th>Admin</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in results %}
+                        <tr>
+                            <td>{{ user.username }}</td>
+                            <td>{{ user.fullname }}</td>
+                            <td>{{ user.email }}</td>
+                            <td>{{ "Yes" if user.is_admin else "No" }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            
+            {% elif entity_type == "subjects" %}
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Description</th>
+                                <th>Chapters</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for subject in results %}
+                            <tr>
+                                <td>{{ subject.id }}</td>
+                                <td>{{ subject.name }}</td>
+                                <td>{{ subject.description }}</td>
+                                <td>{{ subject.chapters|length }}</td>
+                                <td>
+                                    <a href="{{ url_for('show_subject', id=subject.id) }}" class="btn btn-sm btn-info">View</a>
+                                    <a href="{{ url_for('edit_subject', id=subject.id) }}" class="btn btn-sm btn-warning">Edit</a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            
+            {% elif entity_type == "quizzes" %}
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Chapter</th>
+                                <th>Description</th>
+                                <th>Scheduled Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for quiz in results %}
+                            <tr>
+                                <td>{{ quiz.id }}</td>
+                                <td>{{ quiz.name }}</td>
+                                <td>{{ quiz.chapter.name }}</td>
+                                <td>{{ quiz.description }}</td>
+                                <td>{{ quiz.quiz_schedule_date.strftime('%Y-%m-%d %H:%M') }}</td>
+                                <td>
+                                    <a href="{{ url_for('show_quiz', subject_id=quiz.chapter.subject_id, chapter_id=quiz.chapter_id, quiz_id=quiz.id) }}" class="btn btn-sm btn-info">View</a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            
+            {% elif entity_type == "questions" %}
+                <div class="accordion" id="questionsAccordion">
+                    {% for question in results %}
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="heading{{ question.id }}">
+                            <button class="accordion-button collapsed" type="button" 
+                                    data-bs-toggle="collapse" data-bs-target="#collapse{{ question.id }}">
+                                {{ question.question }}
+                            </button>
+                        </h2>
+                        <div id="collapse{{ question.id }}" class="accordion-collapse collapse" 
+                             aria-labelledby="heading{{ question.id }}" data-bs-parent="#questionsAccordion">
+                            <div class="accordion-body">
+                                <ul class="list-group mb-3">
+                                    <li class="list-group-item {% if question.correct_option == question.option1 %}list-group-item-success{% endif %}">
+                                        A: {{ question.option1 }}
+                                        {% if question.correct_option == question.option1 %}<span class="badge bg-success float-end">Correct</span>{% endif %}
+                                    </li>
+                                    <li class="list-group-item {% if question.correct_option == question.option2 %}list-group-item-success{% endif %}">
+                                        B: {{ question.option2 }}
+                                        {% if question.correct_option == question.option2 %}<span class="badge bg-success float-end">Correct</span>{% endif %}
+                                    </li>
+                                    <li class="list-group-item {% if question.correct_option == question.option3 %}list-group-item-success{% endif %}">
+                                        C: {{ question.option3 }}
+                                        {% if question.correct_option == question.option3 %}<span class="badge bg-success float-end">Correct</span>{% endif %}
+                                    </li>
+                                    <li class="list-group-item {% if question.correct_option == question.option4 %}list-group-item-success{% endif %}">
+                                        D: {{ question.option4 }}
+                                        {% if question.correct_option == question.option4 %}<span class="badge bg-success float-end">Correct</span>{% endif %}
+                                    </li>
+                                </ul>
+                                <div class="d-flex justify-content-end">
+                                    <a href="{{ url_for('edit_question', 
+                                                       subject_id=question.quiz.chapter.subject_id,
+                                                       chapter_id=question.quiz.chapter_id,
+                                                       quiz_id=question.quiz_id,
+                                                       question_id=question.id) }}" 
+                                       class="btn btn-warning btn-sm">Edit Question</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    {% else %}
+    <div class="alert alert-warning">
+        <h4 class="alert-heading">No Results Found</h4>
+        <p>No matches found for "{{ query }}" in {{ entity_type }}. Please try a different search term.</p>
+    </div>
+    {% endif %}
+    
+    <div class="mt-4">
+        <a href="{{ url_for('admin_home') }}" class="btn btn-secondary">Back to Admin Dashboard</a>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+{% block title %}Quiz Search Results{% endblock %}
+{% block content %}
+<div class="container mt-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Quiz Search Results</h1>
+        <a href="{{ url_for('search') }}" class="btn btn-primary">
+            <i class="fas fa-search"></i> New Search
+        </a>
+    </div>
+    
+    <div class="alert alert-info">
+        Showing quiz results for: <strong>"{{ query }}"</strong>
+    </div>
+    
+    {% if results %}
+        <h4>{{ results|length }} result(s) found</h4>
+        
+        <div class="row row-cols-1 row-cols-md-3 g-4">
+            {% for quiz in results %}
+            <div class="col">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <h5 class="card-title">{{ quiz.name }}</h5>
+                    </div>
+                    <div class="card-body">
+                        <p><strong>Subject:</strong> {{ quiz.chapter.subject.name }}</p>
+                        <p><strong>Chapter:</strong> {{ quiz.chapter.name }}</p>
+                        <p>{{ quiz.description }}</p>
+                        
+                        <p>
+                            <strong>Questions:</strong> {{ quiz.included_questions|length }}<br>
+                            <strong>Date:</strong> {{ quiz.quiz_schedule_date.strftime('%Y-%m-%d %H:%M') }}<br>
+                            <strong>Duration:</strong> {{ quiz.quiz_duration }} minutes
+                        </p>
+                        
+                        {% set current_time = now() %}
+                        {% if current_time < quiz.quiz_schedule_date %}
+                            <div class="alert alert-warning">
+                                This quiz will be available on {{ quiz.quiz_schedule_date.strftime('%Y-%m-%d at %H:%M') }}
+                            </div>
+                        {% elif current_time > (quiz.quiz_schedule_date + timedelta(minutes=quiz.quiz_duration)) %}
+                            <div class="alert alert-danger">Quiz has ended</div>
+                        {% else %}
+                            <div class="alert alert-success">
+                                <strong>Available now!</strong> Ends at {{ (quiz.quiz_schedule_date + timedelta(minutes=quiz.quiz_duration)).strftime('%H:%M') }}
+                            </div>
+                            <div class="d-grid">
+                                <a href="{{ url_for('start_quiz', quiz_id=quiz.id) }}" class="btn btn-primary">
+                                    Take Quiz
+                                </a>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    
+    {% else %}
+        <div class="alert alert-warning">
+            <h4 class="alert-heading">No Quizzes Found</h4>
+            <p>No quizzes match your search for "{{ query }}". Try different keywords.</p>
+        </div>
+    {% endif %}
+    
+    <div class="mt-4">
+        <a href="{{ url_for('home') }}" class="btn btn-secondary">Back to Home</a>
+    </div>
+</div>
+{% endblock %}

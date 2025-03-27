@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% block title %}Search{% endblock %}
+{% block content %}
+<div class="container mt-5">
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <h1 class="mb-0">Search</h1>
+        </div>
+        <div class="card-body">
+            <form method="POST" action="{{ url_for('search') }}">
+                <div class="row mb-3">
+                    {% if is_admin %}
+                    <div class="col-md-4">
+                        <label for="entity_type" class="form-label">Search for:</label>
+                        <select class="form-select" id="entity_type" name="entity_type" required>
+                            <option value="users">Users</option>
+                            <option value="subjects">Subjects</option>
+                            <option value="quizzes">Quizzes</option>
+                            <option value="questions">Questions</option>
+                        </select>
+                    </div>
+                    <div class="col-md-8">
+                    {% else %}
+                    <div class="col-12">
+                        <!-- For users, just provide a search box without entity selection -->
+                        <input type="hidden" name="entity_type" value="quizzes">
+                    {% endif %}
+                        <label for="query" class="form-label">{% if is_admin %}Search term:{% else %}Search quizzes by name, description or subject:{% endif %}</label>
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="query" name="query" 
+                                placeholder="Enter search keywords..." required>
+                            <button class="btn btn-primary" type="submit">
+                                <i class="fas fa-search"></i> Search
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <div class="text-center mt-4">
+        {% if is_admin %}
+        <a href="{{ url_for('admin_home') }}" class="btn btn-secondary">Back to Dashboard</a>
+        {% else %}
+        <a href="{{ url_for('home') }}" class="btn btn-secondary">Back to Home</a>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

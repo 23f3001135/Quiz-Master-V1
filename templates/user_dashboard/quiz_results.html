@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% block title %}Your Quiz History{% endblock %}
+{% block content %}
+<div class="container mt-5">
+  <h1 class="mb-4">Your Quiz History</h1>
+  
+  {% if quiz_results %}
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+      {% for quiz_id, data in quiz_results.items() %}
+        <div class="col">
+          <div class="card h-100">
+            <div class="card-header bg-primary text-white">
+              <h5 class="card-title mb-0">{{ data.quiz_name }}</h5>
+            </div>
+            <div class="card-body">
+              <h6 class="card-subtitle mb-2 text-muted">
+                {{ data.attempts }} attempt{{ 's' if data.attempts != 1 else '' }}
+              </h6>
+              <p class="card-text">
+                <strong>Best Score:</strong> {{ data.highest_score }} / 
+                {{ data.scores[0].total }} ({{ "%.1f"|format(data.highest_score / data.scores[0].total * 100) }}%)
+              </p>
+              
+              <h6>Previous Attempts</h6>
+              <ul class="list-group">
+                {% for score_data in data.scores %}
+                  <li class="list-group-item d-flex justify-content-between align-items-center">
+                    Score: {{ score_data.score }}/{{ score_data.total }}
+                  </li>
+                {% endfor %}
+              </ul>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="alert alert-info">
+      <p>You haven't taken any quizzes yet.</p>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

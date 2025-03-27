@@ -2,6 +2,7 @@ import os
 
 from dotenv import load_dotenv
 from flask import Flask
+from datetime import datetime
 
 load_dotenv()
 app = Flask(__name__)
@@ -13,10 +14,18 @@ try:
 except Exception as e:
     print("Error loading environment variables:", e)
 
+try:
+    @app.template_filter('datetimeformat')
+    def datetimeformat(value, format="%Y-%m-%dT%H:%M"):
+        if isinstance(value, datetime):
+            return value.strftime(format)
+        return value
+except Exception as e:
+    print("Error creating datetimeformat filter:", e)
+
 # creating db
 try:
     from models import create_db
-
     create_db(app)
 except Exception as e:
     print("Error initializing database:", e)

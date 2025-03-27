@@ -30,6 +30,8 @@ class Quiz(db.Model):
     name = db.Column(db.String(80), unique=True, nullable=False)
     description = db.Column(db.String(120), default="Not available")
     included_questions = db.relationship("Question", backref="quiz", lazy=True)
+    quiz_schedule_date = db.Column(db.DateTime, nullable=False)
+    quiz_duration = db.Column(db.Integer, nullable=False)
 
 
 class Question(db.Model):
@@ -46,7 +48,6 @@ class Score(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     user_id = db.Column(db.String(80), db.ForeignKey("user.username"), nullable=False)
     quiz_id = db.Column(db.Integer, db.ForeignKey("quiz.id"), nullable=False)
-    time_taken = db.Column(db.Integer, nullable=False)
     score = db.Column(db.Integer, nullable=False)
 
 def create_db(app):

@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% block title %}Home{% endblock %}
+{% block content %}
+<div class="container mt-5">
+    <h1 class="mb-4">Welcome to Quiz Master, {{ user.fullname }}</h1>
+    <div class="recent-quizzes">
+        <h2>Recent Quizzes</h2>
+        {% if recent_quizzes %}
+        <div class="row">
+            {% for quiz in recent_quizzes %}
+            <div class="col-md-4">
+                <div class="card mb-4 shadow-sm">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="card-title mb-0">{{ quiz.name }}</h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text">
+                            <strong>Quiz ID:</strong> {{ quiz.id }}<br>
+                            <strong>Subject:</strong> {{ quiz.chapter.subject.name }}<br>
+                            <strong>Chapter:</strong> {{ quiz.chapter.name }}<br>
+                            <strong>No. of Questions:</strong> {{ quiz.included_questions|length }}<br>
+                            <strong>Scheduled:</strong> {{ quiz.quiz_schedule_date.strftime('%d/%m/%Y') }}<br>
+                            <strong>Duration:</strong> {{ "%02d:%02d"|format(quiz.quiz_duration // 60,
+                            quiz.quiz_duration % 60) }}
+                        </p>
+                    </div>
+                    <div class="card-footer text-end">
+                        <a href="{{ url_for('start_quiz', quiz_id=quiz.id) }}" class="btn btn-primary btn-sm">
+                            <i class="fas fa-play"></i> Start Quiz
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p>No recent quizzes available.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

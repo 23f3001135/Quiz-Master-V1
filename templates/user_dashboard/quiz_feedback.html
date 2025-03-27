@@ -1,0 +1,123 @@
+{% extends 'base.html' %}
+{% block title %}Quiz Feedback: {{ quiz.name }}{% endblock %}
+{% block content %}
+<div class="container mt-5">
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            <h2>Quiz Results for: {{ quiz.name }}</h2>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-4 text-center">
+                    <h3 class="text-primary">{{ score.score }}/{{ total_questions }}</h3>
+                    <p class="text-muted">Total Score</p>
+                </div>
+                <div class="col-md-4 text-center">
+                    <h3 class="{% if percentage >= 60 %}text-success{% else %}text-danger{% endif %}">
+                        {{ "%.1f"|format(percentage) }}%
+                    </h3>
+                    <p class="text-muted">Percentage</p>
+                </div>
+                <div class="col-md-4 text-center">
+                    <h3>
+                        {% if percentage >= 80 %}Excellent!
+                        {% elif percentage >= 60 %}Good Job!
+                        {% elif percentage >= 40 %}Needs improvement
+                        {% else %}Try again{% endif %}
+                    </h3>
+                    <p class="text-muted">Performance</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h3 class="mb-4">Detailed Feedback</h3>
+
+    {% for question in questions %}
+    {% set question_id = question.id %}
+    {% set user_response_key = user_responses.get(question_id|string) %}
+
+    {% if user_response_key == "option1" %}
+    {% set user_answer = question.option1 %}
+    {% elif user_response_key == "option2" %}
+    {% set user_answer = question.option2 %}
+    {% elif user_response_key == "option3" %}
+    {% set user_answer = question.option3 %}
+    {% elif user_response_key == "option4" %}
+    {% set user_answer = question.option4 %}
+    {% else %}
+    {% set user_answer = "No answer selected" %}
+    {% endif %}
+
+    {% set is_correct = (user_answer == question.correct_option) %}
+
+    <div class="card mb-4 {% if is_correct %}border-success{% else %}border-danger{% endif %}">
+        <div class="card-header {% if is_correct %}bg-success text-white{% else %}bg-danger text-white{% endif %}">
+            <div class="d-flex justify-content-between align-items-center">
+                <h4 class="mb-0">Question {{ loop.index }}</h4>
+                <span>
+                    {% if is_correct %}
+                    <i class="fas fa-check-circle"></i> Correct
+                    {% else %}
+                    <i class="fas fa-times-circle"></i> Incorrect
+                    {% endif %}
+                </span>
+            </div>
+        </div>
+        <div class="card-body">
+            <h5>{{ question.question }}</h5>
+
+            <div class="mt-3">
+                <p><strong>Your answer:</strong> {{ user_answer }}</p>
+                {% if not is_correct %}
+                <p><strong>Correct answer:</strong> {{ question.correct_option }}</p>
+                {% endif %}
+            </div>
+
+            <div class="mt-4">
+                <h6>All Options:</h6>
+                <ul class="list-group">
+                    <li
+                        class="list-group-item {% if question.option1 == question.correct_option %}list-group-item-success{% endif %} {% if user_response_key == 'option1' and not is_correct %}list-group-item-danger{% endif %}">
+                        {{ question.option1 }}
+                        {% if question.option1 == question.correct_option %}<span
+                            class="badge bg-success float-end">Correct</span>{% endif %}
+                        {% if user_response_key == 'option1' %}<span class="badge bg-primary float-end">Your
+                            choice</span>{% endif %}
+                    </li>
+                    <li
+                        class="list-group-item {% if question.option2 == question.correct_option %}list-group-item-success{% endif %} {% if user_response_key == 'option2' and not is_correct %}list-group-item-danger{% endif %}">
+                        {{ question.option2 }}
+                        {% if question.option2 == question.correct_option %}<span
+                            class="badge bg-success float-end">Correct</span>{% endif %}
+                        {% if user_response_key == 'option2' %}<span class="badge bg-primary float-end">Your
+                            choice</span>{% endif %}
+                    </li>
+                    <li
+                        class="list-group-item {% if question.option3 == question.correct_option %}list-group-item-success{% endif %} {% if user_response_key == 'option3' and not is_correct %}list-group-item-danger{% endif %}">
+                        {{ question.option3 }}
+                        {% if question.option3 == question.correct_option %}<span
+                            class="badge bg-success float-end">Correct</span>{% endif %}
+                        {% if user_response_key == 'option3' %}<span class="badge bg-primary float-end">Your
+                            choice</span>{% endif %}
+                    </li>
+                    <li
+                        class="list-group-item {% if question.option4 == question.correct_option %}list-group-item-success{% endif %} {% if user_response_key == 'option4' and not is_correct %}list-group-item-danger{% endif %}">
+                        {{ question.option4 }}
+                        {% if question.option4 == question.correct_option %}<span
+                            class="badge bg-success float-end">Correct</span>{% endif %}
+                        {% if user_response_key == 'option4' %}<span class="badge bg-primary float-end">Your
+                            choice</span>{% endif %}
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+
+    <div class="d-flex justify-content-between mb-5">
+        <a href="{{ url_for('quiz_results') }}" class="btn btn-primary">View All Quiz Results</a>
+        <a href="{{ url_for('home') }}" class="btn btn-secondary">Return to Home</a>
+    </div>
+</div>
+{% endblock %}
