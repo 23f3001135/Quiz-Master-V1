@@ -20,3 +20,6 @@ instance/*
 uv.lock
 pyproject.toml
 .python-version
+
+# Ignore the list of tests I will perform manually I made list first so I don't forget any functionality
+test.md

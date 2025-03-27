@@ -126,7 +126,7 @@ def set_routes(app):
     def profile():
         if request.method == "POST":
             user = User.query.get(session["user_id"])
-            full_name = request.form.get("full_name")
+            full_name = request.form.get("fullname")
             username = request.form.get("username")
             cpassword = request.form.get("cpassword")
             npassword = request.form.get("password")
