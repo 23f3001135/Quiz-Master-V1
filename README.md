@@ -40,4 +40,11 @@ quiz_master/
   │ 
   ├── user_dashboard/ # User dashboard templates 
   │ 
-  └── static/ # Static files (CSS, JS)
+  └── static/ # Static files
+
+## How to run the Project
+
+1. first create venv, "python -m venv .venv" (or python3 -m venv .venv)
+2. Activate the venv, with "source .venv/bin/activate"
+3. Install libraries with, "pip install -r requirements.txt"
+4. "python app.py" or "flask run"
